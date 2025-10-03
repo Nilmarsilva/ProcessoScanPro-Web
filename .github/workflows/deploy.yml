@@ -1,0 +1,40 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            cd /opt/ProcessoScanPro-Web
+            
+            # Pull latest code
+            git pull origin main
+            
+            # Build backend
+            docker build -t nilmarsilva/processoscanpro-backend:latest ./backend
+            
+            # Build frontend
+            docker build -t nilmarsilva/processoscanpro-frontend:latest \
+              --build-arg VITE_API_URL=https://processoscanpro.atendimentorapido.app.br \
+              ./frontend
+            
+            # Update services
+            docker service update --force --image nilmarsilva/processoscanpro-backend:latest processoscanpro_backend
+            docker service update --force --image nilmarsilva/processoscanpro-frontend:latest processoscanpro_frontend
+            
+            echo "✅ Deploy completed successfully!"

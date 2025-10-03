@@ -50,12 +50,17 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
             detail="Nome de usuário já cadastrado"
         )
     
+    # Verifica se é o primeiro usuário (será admin automaticamente)
+    total_users = db.query(User).count()
+    is_first_user = total_users == 0
+    
     # Cria novo usuário
     user = User(
         email=user_in.email,
         username=user_in.username,
         full_name=user_in.full_name,
-        hashed_password=get_password_hash(user_in.password)
+        hashed_password=get_password_hash(user_in.password),
+        is_superuser=is_first_user  # Primeiro usuário vira admin automaticamente
     )
     
     db.add(user)
