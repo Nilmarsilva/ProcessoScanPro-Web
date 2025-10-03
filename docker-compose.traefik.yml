@@ -22,11 +22,21 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:ProcessoScan2025!Secure@db:5432/processoscanpro
       REDIS_URL: redis://:DjZpdKNiFlJahr2HXOkcg9m8Ws70Twv6@redis:6379/0
-      JUDIT_API_KEY: ${JUDIT_API_KEY}
+      JUDIT_API_KEY: ${JUDIT_API_KEY:-}
       JUDIT_WEBHOOK_URL: https://${DOMAIN:-processoscanpro.atendimentorapido.app.br}/api/judit/webhook
       SECRET_KEY: ${SECRET_KEY:-processoscan_2025_production_key}
       DEBUG: "False"
       CORS_ORIGINS: '["https://${DOMAIN:-processoscanpro.atendimentorapido.app.br}"]'
+      # Pipedrive
+      PIPEDRIVE_API_KEY: ${PIPEDRIVE_API_KEY:-}
+      PIPEDRIVE_DOMAIN: ${PIPEDRIVE_DOMAIN:-}
+      # Assertiva
+      ASSERTIVA_CLIENT_ID: ${ASSERTIVA_CLIENT_ID:-}
+      ASSERTIVA_CLIENT_SECRET: ${ASSERTIVA_CLIENT_SECRET:-}
+      ASSERTIVA_BASE_URL: ${ASSERTIVA_BASE_URL:-https://api.assertivasolucoes.com.br}
+      ASSERTIVA_AUTH_URL: ${ASSERTIVA_AUTH_URL:-https://api.assertivasolucoes.com.br/oauth2/v3/token}
+      # Escavador
+      ESCAVADOR_API_TOKEN: ${ESCAVADOR_API_TOKEN:-}
     networks:
       - network_public
     deploy:
