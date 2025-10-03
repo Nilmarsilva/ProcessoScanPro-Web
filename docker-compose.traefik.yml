@@ -19,6 +19,9 @@ services:
   # Backend FastAPI
   backend:
     image: nilmarsilva/processoscanpro-backend:latest
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     environment:
       DATABASE_URL: postgresql://postgres:ProcessoScan2025!Secure@db:5432/processoscanpro
       REDIS_URL: redis://:DjZpdKNiFlJahr2HXOkcg9m8Ws70Twv6@redis:6379/0
