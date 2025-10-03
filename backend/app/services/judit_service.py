@@ -1,5 +1,6 @@
 import httpx
 import os
+import time
 from typing import List, Dict, Any
 from datetime import datetime
 import uuid
@@ -85,6 +86,9 @@ class JuditService:
                         else:
                             print(f"[JUDIT] Erro ao enviar {documento}: {response.status_code}")
                             self._registrar_erro(db, batch_id, documento, f"HTTP {response.status_code}")
+                        
+                        # Delay de 1 segundo entre requisições para evitar rate limiting
+                        time.sleep(1)
                     
                     except Exception as e:
                         print(f"[JUDIT] Erro no registro {idx+1}: {str(e)}")
@@ -168,8 +172,17 @@ class JuditService:
                             
                             print(f"[JUDIT] Processado: {documento}")
                         else:
-                            print(f"[JUDIT] Erro ao consultar {documento}: {response.status_code}")
-                            self._registrar_erro(db, batch_id, documento, f"HTTP {response.status_code}")
+                            error_msg = f"HTTP {response.status_code}"
+                            try:
+                                error_detail = response.json()
+                                error_msg = f"{error_msg} - {error_detail}"
+                            except:
+                                pass
+                            print(f"[JUDIT] Erro ao consultar {documento}: {error_msg}")
+                            self._registrar_erro(db, batch_id, documento, error_msg)
+                        
+                        # Delay de 1 segundo entre requisições para evitar rate limiting
+                        time.sleep(1)
                     
                     except Exception as e:
                         print(f"[JUDIT] Erro no registro {idx+1}: {str(e)}")
