@@ -6,7 +6,7 @@ services:
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ProcessoScan2025!Secure}
+      POSTGRES_PASSWORD: ProcessoScan2025!Secure
       POSTGRES_DB: processoscanpro
     volumes:
       - processoscanpro_postgres_data:/var/lib/postgresql/data
@@ -20,8 +20,8 @@ services:
   backend:
     image: nilmarsilva/processoscanpro-backend:latest
     environment:
-      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-ProcessoScan2025!Secure}@db:5432/processoscanpro
-      REDIS_URL: redis://:${REDIS_PASSWORD:-DjZpdKNiFlJahr2HXOkcg9m8Ws70Twv6}@redis:6379/0
+      DATABASE_URL: postgresql://postgres:ProcessoScan2025!Secure@db:5432/processoscanpro
+      REDIS_URL: redis://:DjZpdKNiFlJahr2HXOkcg9m8Ws70Twv6@redis:6379/0
       JUDIT_API_KEY: ${JUDIT_API_KEY}
       JUDIT_WEBHOOK_URL: https://${DOMAIN:-processoscanpro.atendimentorapido.app.br}/api/judit/webhook
       SECRET_KEY: ${SECRET_KEY:-processoscan_2025_production_key}
