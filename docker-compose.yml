@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # Backend FastAPI
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: processoscanpro-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/processoscanpro
+      - REDIS_URL=redis://redis:6379/0
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    networks:
+      - processoscanpro-network
+
+  # Frontend React
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: processoscanpro-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host
+    networks:
+      - processoscanpro-network
+    depends_on:
+      - backend
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: processoscanpro-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=processoscanpro
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - processoscanpro-network
+
+  # Redis (para cache e Celery)
+  redis:
+    image: redis:7-alpine
+    container_name: processoscanpro-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - processoscanpro-network
+
+  # pgAdmin (opcional - interface para PostgreSQL)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: processoscanpro-pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@processoscanpro.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - processoscanpro-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  processoscanpro-network:
+    driver: bridge

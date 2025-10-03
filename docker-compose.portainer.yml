@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (Dedicado ProcessoScanPro)
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ProcessoScan2025!Secure}
+      POSTGRES_DB: processoscanpro
+    volumes:
+      - processoscanpro_postgres_data:/var/lib/postgresql/data
+    networks:
+      - network_public
+
+  # Backend FastAPI
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-ProcessoScan2025!Secure}@db:5432/processoscanpro
+      REDIS_URL: redis://:${REDIS_PASSWORD:-DjZpdKNiFlJahr2HXOkcg9m8Ws70Twv6}@redis:6379/0
+      JUDIT_API_KEY: ${JUDIT_API_KEY}
+      JUDIT_WEBHOOK_URL: https://${DOMAIN:-processoscanpro.atendimentorapido.app.br}/api/judit/webhook
+      SECRET_KEY: ${SECRET_KEY:-processoscan_2025_production_key_change_this_in_prod_12345678}
+      DEBUG: "False"
+      CORS_ORIGINS: '["https://${DOMAIN:-processoscanpro.atendimentorapido.app.br}"]'
+    depends_on:
+      - db
+    networks:
+      - network_public
+
+  # Frontend React
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: https://${DOMAIN:-processoscanpro.atendimentorapido.app.br}
+    restart: always
+    environment:
+      VITE_API_URL: https://${DOMAIN:-processoscanpro.atendimentorapido.app.br}
+    networks:
+      - network_public
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - network_public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.processoscanpro.rule=Host(`${DOMAIN:-processoscanpro.atendimentorapido.app.br}`)"
+      - "traefik.http.routers.processoscanpro.entrypoints=websecure"
+      - "traefik.http.routers.processoscanpro.tls.certresolver=letsencrypt"
+      - "traefik.http.services.processoscanpro.loadbalancer.server.port=80"
+
+volumes:
+  processoscanpro_postgres_data:
+    driver: local
+
+networks:
+  network_public:
+    external: true

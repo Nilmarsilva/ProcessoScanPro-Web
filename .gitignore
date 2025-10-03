@@ -1,0 +1,68 @@
+# Backend
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+backend/.Python
+backend/venv/
+backend/env/
+backend/*.db
+backend/*.sqlite
+backend/*.sqlite3
+backend/.env
+backend/.venv
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.cache/
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Docker
+.docker/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Arquivos temporários de deploy
+*.zip
+*.tar.gz
+
+# Arquivos sensíveis (NÃO COMMITAR!)
+backend/.env
+backend/.env.prod
+.env
+.env.local
+.env.production
+
+# Build
+frontend/build/
+backend/__pycache__/
+backend/*.pyc
+
+# Documentação temporária
+SOLUCAO_DNS.md
+COMANDOS_SETUP.md
