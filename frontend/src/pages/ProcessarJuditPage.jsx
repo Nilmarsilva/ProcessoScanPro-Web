@@ -99,6 +99,12 @@ export default function ProcessarJuditPage() {
         setMapeamento(novoMapeamento);
         setArquivo({ name: 'Dados do Pipedrive' });
         
+        // Limpa dados anteriores de processamento
+        setResultados([]);
+        setBatchId(null);
+        setStatusProcessamento(null);
+        localStorage.removeItem('processar_resultados');
+        
         addLog(`${dados.length} registros carregados do Pipedrive`, 'success');
         addLog('Colunas mapeadas automaticamente', 'success');
         
@@ -339,6 +345,7 @@ export default function ProcessarJuditPage() {
   const handleNovaBusca = () => {
     setArquivo(null);
     setColunas([]);
+    setDadosCarregados([]);
     setMapeamento({
       nome: '',
       empresa: '',
@@ -349,10 +356,33 @@ export default function ProcessarJuditPage() {
     setLogs([]);
     setProcessando(false);
     setPausado(false);
+    setBatchId(null);
+    setStatusProcessamento(null);
+    
+    // Limpa polling se estiver ativo
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    
+    // LIMPA TUDO DO LOCALSTORAGE
+    localStorage.removeItem('processar_arquivo');
+    localStorage.removeItem('processar_colunas');
+    localStorage.removeItem('processar_dados');
+    localStorage.removeItem('processar_mapeamento');
+    localStorage.removeItem('processar_resultados');
+    localStorage.removeItem('processar_logs');
+    
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-    addLog('Nova busca iniciada', 'success');
+    
+    const novoLog = [{ 
+      timestamp: new Date().toLocaleTimeString(), 
+      mensagem: 'Nova busca iniciada - dados anteriores limpos', 
+      tipo: 'success' 
+    }];
+    setLogs(novoLog);
   };
 
   return (
