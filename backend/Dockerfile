@@ -21,5 +21,5 @@ COPY . .
 # Expõe porta
 EXPOSE 8000
 
-# Comando para iniciar a aplicação
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Comando para iniciar a aplicação (PRODUÇÃO - sem reload)
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

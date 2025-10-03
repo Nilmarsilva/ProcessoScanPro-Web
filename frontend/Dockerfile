@@ -1,19 +1,39 @@
-FROM node:18-alpine
+# Stage 1: Build
+FROM node:18-alpine AS builder
 
-# Define diretório de trabalho
 WORKDIR /app
 
-# Copia package.json e package-lock.json
+# Copia package files
 COPY package*.json ./
 
 # Instala dependências
-RUN npm install
+RUN npm ci
 
-# Copia código da aplicação
+# Copia código
 COPY . .
 
-# Expõe porta
-EXPOSE 3000
+# Argumentos de build
+ARG VITE_API_URL=https://processoscanpro.atendimentorapido.app.br
+ENV VITE_API_URL=$VITE_API_URL
 
-# Comando para iniciar a aplicação
-CMD ["npm", "run", "dev", "--", "--host"]
+# Build para produção
+RUN npm run build
+
+# Stage 2: Serve com Nginx
+FROM nginx:alpine
+
+# Copia build
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Copia config nginx para SPA (rotas React)
+RUN echo 'server { \n\
+    listen 80; \n\
+    location / { \n\
+        root /usr/share/nginx/html; \n\
+        try_files $uri $uri/ /index.html; \n\
+    } \n\
+}' > /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

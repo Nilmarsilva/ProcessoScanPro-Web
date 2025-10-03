@@ -35,13 +35,11 @@ services:
       labels:
         # Traefik Backend (API)
         - "traefik.enable=true"
-        - "traefik.http.routers.processoscan-backend.rule=Host(`${DOMAIN:-processoscanpro.atendimentorapido.app.br}`) && PathPrefix(`/api`)"
+        - "traefik.http.routers.processoscan-backend.rule=Host(`processoscanpro.atendimentorapido.app.br`) && PathPrefix(`/api`)"
         - "traefik.http.routers.processoscan-backend.entrypoints=websecure"
         - "traefik.http.routers.processoscan-backend.tls.certresolver=letsencrypt"
         - "traefik.http.services.processoscan-backend.loadbalancer.server.port=8000"
-        # Middleware para remover /api prefix se necessário
-        # - "traefik.http.middlewares.processoscan-stripprefix.stripprefix.prefixes=/api"
-        # - "traefik.http.routers.processoscan-backend.middlewares=processoscan-stripprefix"
+        - "traefik.http.routers.processoscan-backend.priority=2"
 
   # Frontend React (Servido estaticamente)
   frontend:
@@ -56,13 +54,11 @@ services:
       labels:
         # Traefik Frontend (SPA)
         - "traefik.enable=true"
-        - "traefik.http.routers.processoscan-frontend.rule=Host(`${DOMAIN:-processoscanpro.atendimentorapido.app.br}`)"
+        - "traefik.http.routers.processoscan-frontend.rule=Host(`processoscanpro.atendimentorapido.app.br`)"
         - "traefik.http.routers.processoscan-frontend.entrypoints=websecure"
         - "traefik.http.routers.processoscan-frontend.tls.certresolver=letsencrypt"
         - "traefik.http.services.processoscan-frontend.loadbalancer.server.port=80"
-        # Prioridade: Frontend tem prioridade menor que backend
         - "traefik.http.routers.processoscan-frontend.priority=1"
-        - "traefik.http.routers.processoscan-backend.priority=2"
 
 volumes:
   processoscanpro_postgres_data:
