@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (Dedicado ProcessoScanPro)
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ProcessoScan2025!Secure}
+      POSTGRES_DB: processoscanpro
+    volumes:
+      - processoscanpro_postgres_data:/var/lib/postgresql/data
+    networks:
+      - network_public
+    deploy:
+      restart_policy:
+        condition: any
+
+  # Backend FastAPI
+  backend:
+    image: nilmarsilva/processoscanpro-backend:latest
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-ProcessoScan2025!Secure}@db:5432/processoscanpro
+      REDIS_URL: redis://:${REDIS_PASSWORD:-DjZpdKNiFlJahr2HXOkcg9m8Ws70Twv6}@redis:6379/0
+      JUDIT_API_KEY: ${JUDIT_API_KEY}
+      JUDIT_WEBHOOK_URL: https://${DOMAIN:-processoscanpro.atendimentorapido.app.br}/api/judit/webhook
+      SECRET_KEY: ${SECRET_KEY:-processoscan_2025_production_key}
+      DEBUG: "False"
+      CORS_ORIGINS: '["https://${DOMAIN:-processoscanpro.atendimentorapido.app.br}"]'
+    networks:
+      - network_public
+    deploy:
+      restart_policy:
+        condition: any
+      labels:
+        # Traefik Backend (API)
+        - "traefik.enable=true"
+        - "traefik.http.routers.processoscan-backend.rule=Host(`${DOMAIN:-processoscanpro.atendimentorapido.app.br}`) && PathPrefix(`/api`)"
+        - "traefik.http.routers.processoscan-backend.entrypoints=websecure"
+        - "traefik.http.routers.processoscan-backend.tls.certresolver=letsencrypt"
+        - "traefik.http.services.processoscan-backend.loadbalancer.server.port=8000"
+        # Middleware para remover /api prefix se necessário
+        # - "traefik.http.middlewares.processoscan-stripprefix.stripprefix.prefixes=/api"
+        # - "traefik.http.routers.processoscan-backend.middlewares=processoscan-stripprefix"
+
+  # Frontend React (Servido estaticamente)
+  frontend:
+    image: nilmarsilva/processoscanpro-frontend:latest
+    environment:
+      VITE_API_URL: https://${DOMAIN:-processoscanpro.atendimentorapido.app.br}
+    networks:
+      - network_public
+    deploy:
+      restart_policy:
+        condition: any
+      labels:
+        # Traefik Frontend (SPA)
+        - "traefik.enable=true"
+        - "traefik.http.routers.processoscan-frontend.rule=Host(`${DOMAIN:-processoscanpro.atendimentorapido.app.br}`)"
+        - "traefik.http.routers.processoscan-frontend.entrypoints=websecure"
+        - "traefik.http.routers.processoscan-frontend.tls.certresolver=letsencrypt"
+        - "traefik.http.services.processoscan-frontend.loadbalancer.server.port=80"
+        # Prioridade: Frontend tem prioridade menor que backend
+        - "traefik.http.routers.processoscan-frontend.priority=1"
+        - "traefik.http.routers.processoscan-backend.priority=2"
+
+volumes:
+  processoscanpro_postgres_data:
+    driver: local
+
+networks:
+  network_public:
+    external: true
