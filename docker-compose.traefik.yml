@@ -43,7 +43,7 @@ services:
         - "traefik.http.routers.processoscan-backend.rule=Host(`processoscanpro.atendimentorapido.app.br`) && PathPrefix(`/api`)"
         - "traefik.http.routers.processoscan-backend.entrypoints=websecure"
         - "traefik.http.routers.processoscan-backend.tls=true"
-        - "traefik.http.routers.processoscan-backend.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.processoscan-backend.tls.certresolver=letsencryptresolver"
         - "traefik.http.routers.processoscan-backend.priority=2"
         # Service
         - "traefik.http.services.processoscan-backend.loadbalancer.server.port=8000"
@@ -69,7 +69,7 @@ services:
         - "traefik.http.routers.processoscan-frontend.rule=Host(`processoscanpro.atendimentorapido.app.br`)"
         - "traefik.http.routers.processoscan-frontend.entrypoints=websecure"
         - "traefik.http.routers.processoscan-frontend.tls=true"
-        - "traefik.http.routers.processoscan-frontend.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.processoscan-frontend.tls.certresolver=letsencryptresolver"
         - "traefik.http.routers.processoscan-frontend.priority=1"
         # Service
         - "traefik.http.services.processoscan-frontend.loadbalancer.server.port=80"
