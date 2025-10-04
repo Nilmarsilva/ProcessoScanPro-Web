@@ -48,8 +48,8 @@ export default function Sidebar({ isOpen, onClose }) {
       icon: Eye,
       submenu: true,
       items: [
-        { label: 'Com Processo', action: () => console.log('Com Processo') },
-        { label: 'Sem Processo', action: () => console.log('Sem Processo') }
+        { label: 'Com Processo', action: () => navigate('/com-processo') },
+        { label: 'Sem Processo', action: () => navigate('/sem-processo') }
       ]
     },
     {

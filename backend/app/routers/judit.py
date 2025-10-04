@@ -141,6 +141,33 @@ async def receber_webhook(request: Request):
         print(f"[WEBHOOK] Erro: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/batches")
+async def listar_batches(db: Session = Depends(get_db)):
+    """
+    Lista todos os batches processados
+    """
+    try:
+        batches = db.query(JuditBatch).order_by(JuditBatch.created_at.desc()).all()
+        
+        return {
+            "success": True,
+            "data": [
+                {
+                    "batch_id": b.batch_id,
+                    "total": b.total,
+                    "processados": b.processados,
+                    "sucesso": b.sucesso,
+                    "erro": b.erro,
+                    "status": b.status,
+                    "on_demand": b.on_demand,
+                    "created_at": b.created_at.isoformat() if b.created_at else None
+                }
+                for b in batches
+            ]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/resultados/{batch_id}")
 async def obter_resultados(batch_id: str, db: Session = Depends(get_db)):
     """

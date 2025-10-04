@@ -57,5 +57,21 @@ export const juditService = {
       console.error('Erro ao obter resultados:', error);
       throw error;
     }
+  },
+
+  // Lista todos os batches
+  async listarBatches() {
+    try {
+      const response = await fetch(`${API_URL}/batches`);
+      
+      if (!response.ok) {
+        throw new Error(`Erro ao listar batches: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Erro ao listar batches:', error);
+      throw error;
+    }
   }
 };

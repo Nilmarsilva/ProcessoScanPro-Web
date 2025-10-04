@@ -8,6 +8,8 @@ import CnpjPage from './pages/CnpjPage';
 import DadosPage from './pages/DadosPage';
 import PipedrivePage from './pages/PipedrivePage';
 import ProcessarJuditPage from './pages/ProcessarJuditPage';
+import ComProcessoPage from './pages/ComProcessoPage';
+import SemProcessoPage from './pages/SemProcessoPage';
 
 // Protected Route Component
 function ProtectedRoute({ children }) {
@@ -87,6 +89,22 @@ function App() {
           element={
             <ProtectedRoute>
               <ProcessarJuditPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/com-processo"
+          element={
+            <ProtectedRoute>
+              <ComProcessoPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sem-processo"
+          element={
+            <ProtectedRoute>
+              <SemProcessoPage />
             </ProtectedRoute>
           }
         />
