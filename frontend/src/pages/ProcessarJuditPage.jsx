@@ -22,6 +22,7 @@ export default function ProcessarJuditPage() {
   const [mapeamento, setMapeamento] = useState(() => {
     const saved = localStorage.getItem('processar_mapeamento');
     return saved ? JSON.parse(saved) : {
+      id: '',
       nome: '',
       empresa: '',
       cpf: '',
@@ -90,6 +91,7 @@ export default function ProcessarJuditPage() {
         
         // Mapeamento automático
         const novoMapeamento = {
+          id: 'ID',
           nome: 'Título',
           empresa: 'Organização',
           cpf: 'CPF',
@@ -203,6 +205,7 @@ export default function ProcessarJuditPage() {
     try {
       // Transforma dados mapeando as colunas corretamente
       const dadosFormatados = dadosCarregados.map(item => ({
+        'ID': mapeamento.id ? item[mapeamento.id] || '' : '',
         'Título': item[mapeamento.nome] || '',
         'Pessoa': item[mapeamento.nome] || '',
         'Organização': item[mapeamento.empresa] || '',
@@ -245,6 +248,7 @@ export default function ProcessarJuditPage() {
     try {
       // Transforma dados mapeando as colunas corretamente
       const dadosFormatados = dadosCarregados.map(item => ({
+        'ID': mapeamento.id ? item[mapeamento.id] || '' : '',
         'Título': item[mapeamento.nome] || '',
         'Pessoa': item[mapeamento.nome] || '',
         'Organização': item[mapeamento.empresa] || '',
@@ -459,7 +463,21 @@ export default function ProcessarJuditPage() {
             {/* Mapeamento de Colunas */}
             <div className="mb-6 p-6 border rounded-lg bg-card">
               <h3 className="text-lg font-semibold mb-4">Mapeamento de Colunas</h3>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">ID (Pipedrive):</label>
+                  <select
+                    value={mapeamento.id}
+                    onChange={(e) => setMapeamento({...mapeamento, id: e.target.value})}
+                    className="w-full p-2 border rounded-md"
+                    disabled={processando}
+                  >
+                    <option value="">Selecione...</option>
+                    {colunas.map((col, idx) => (
+                      <option key={idx} value={col}>{col}</option>
+                    ))}
+                  </select>
+                </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Nome:</label>
                   <select
