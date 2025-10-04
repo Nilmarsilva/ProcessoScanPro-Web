@@ -64,7 +64,7 @@ class JuditService:
                             headers=headers
                         )
                         
-                        if response.status_code == 200:
+                        if response.status_code in [200, 201]:
                             result = response.json()
                             judit_request_id = result.get("request_id")
                             
@@ -157,20 +157,38 @@ class JuditService:
                             headers=headers
                         )
                         
-                        if response.status_code == 200:
+                        if response.status_code in [200, 201]:
                             result = response.json()
+                            judit_request_id = result.get("request_id")
+                            status_resposta = result.get("status", "pending")
                             
-                            # Processa resultado imediatamente
-                            self._processar_resultado_banco(
-                                db,
-                                batch_id,
-                                registro,
-                                documento,
-                                doc_type,
-                                result
-                            )
-                            
-                            print(f"[JUDIT] Processado: {documento}")
+                            # Se status é "pending", salva requisição para consultar depois
+                            if status_resposta == "pending":
+                                request_id = str(uuid.uuid4())
+                                req = JuditRequest(
+                                    batch_id=batch_id,
+                                    request_id=request_id,
+                                    judit_request_id=judit_request_id,
+                                    documento=documento,
+                                    doc_type=doc_type,
+                                    nome=registro.get("Título", registro.get("Pessoa", "")),
+                                    empresa=registro.get("Organização", ""),
+                                    status="aguardando"
+                                )
+                                db.add(req)
+                                db.commit()
+                                print(f"[JUDIT] Requisição criada (pending): {documento} - ID: {judit_request_id}")
+                            else:
+                                # Processa resultado imediatamente se já tiver dados
+                                self._processar_resultado_banco(
+                                    db,
+                                    batch_id,
+                                    registro,
+                                    documento,
+                                    doc_type,
+                                    result
+                                )
+                                print(f"[JUDIT] Processado: {documento}")
                         else:
                             error_msg = f"HTTP {response.status_code}"
                             try:
@@ -188,13 +206,23 @@ class JuditService:
                         print(f"[JUDIT] Erro no registro {idx+1}: {str(e)}")
                         self._registrar_erro(db, batch_id, registro.get("CPF", registro.get("CNPJ", "?")), str(e))
                 
-                # Atualiza status do batch como concluído
+                # Atualiza status do batch
                 batch = db.query(JuditBatch).filter(JuditBatch.batch_id == batch_id).first()
                 if batch:
-                    batch.status = "concluído"
+                    # Verifica se todas as requisições foram processadas ou estão aguardando
+                    requisicoes_pendentes = db.query(JuditRequest).filter(
+                        JuditRequest.batch_id == batch_id,
+                        JuditRequest.status == "aguardando"
+                    ).count()
+                    
+                    if requisicoes_pendentes > 0:
+                        batch.status = "aguardando_webhooks"
+                        print(f"[JUDIT] Batch {batch_id}: {requisicoes_pendentes} requisições aguardando resposta")
+                    else:
+                        batch.status = "concluído"
+                        print(f"[JUDIT] Batch {batch_id}: Processamento concluído")
+                    
                     db.commit()
-                
-                print(f"[JUDIT] Batch {batch_id}: Processamento concluído")
         
         except Exception as e:
             print(f"[JUDIT] Erro geral no batch {batch_id}: {str(e)}")
