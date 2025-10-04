@@ -31,26 +31,26 @@ export default function CnpjTable({ data, columns, onExport }) {
       </div>
 
       {/* Tabela */}
-      <div className="border rounded-lg overflow-hidden">
+      <div className="border rounded-lg bg-white overflow-hidden shadow-sm">
         <div className="overflow-auto max-h-[600px]">
-          <table className="w-full">
-            <thead className="bg-muted sticky top-0">
-              <tr>
+          <table className="w-full text-xs border-collapse">
+            <thead className="bg-slate-50 sticky top-0">
+              <tr className="border-b border-slate-200">
                 {columns.map((column, index) => (
                   <th
                     key={index}
-                    className="px-2 py-2 text-left text-xs font-medium text-muted-foreground whitespace-nowrap"
+                    className="px-3 py-2 text-left font-medium text-slate-600 whitespace-nowrap border-r border-slate-200 last:border-r-0"
                   >
                     {column}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody>
               {data.map((row, rowIndex) => (
                 <tr
                   key={rowIndex}
-                  className="hover:bg-muted/50 transition-colors"
+                  className="border-b border-slate-200 hover:bg-slate-50 transition-colors"
                 >
                   {columns.map((column, colIndex) => {
                     const value = row[column];
@@ -62,7 +62,7 @@ export default function CnpjTable({ data, columns, onExport }) {
                     return (
                       <td
                         key={colIndex}
-                        className="px-2 py-2 text-xs whitespace-nowrap"
+                        className="px-3 py-1.5 text-slate-700 whitespace-nowrap border-r border-slate-200 last:border-r-0"
                       >
                         {displayValue}
                       </td>

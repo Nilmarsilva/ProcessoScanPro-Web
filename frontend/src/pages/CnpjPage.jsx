@@ -215,12 +215,12 @@ export default function CnpjPage() {
 
           {/* Table Section */}
           {data.length > 0 && (
-            <div className="border rounded-lg bg-card overflow-hidden">
+            <div className="border rounded-lg bg-white overflow-hidden shadow-sm">
               <div className="overflow-auto max-h-[600px]">
-                <table className="w-full text-xs">
-                  <thead className="bg-muted/50 sticky top-0">
-                    <tr>
-                      <th className="p-2 text-left font-medium w-10 sticky left-0 bg-muted/50 z-10">
+                <table className="w-full text-xs border-collapse">
+                  <thead className="bg-slate-50 sticky top-0">
+                    <tr className="border-b border-slate-200">
+                      <th className="px-3 py-2 text-left font-medium w-10 sticky left-0 bg-slate-50 z-10 border-r border-slate-200">
                         <input 
                           type="checkbox" 
                           checked={isAllSelected}
@@ -230,7 +230,7 @@ export default function CnpjPage() {
                         />
                       </th>
                       {columns.map((col, index) => (
-                        <th key={index} className="p-2 text-left font-medium border-b whitespace-nowrap">
+                        <th key={index} className="px-3 py-2 text-left font-medium text-slate-600 whitespace-nowrap border-r border-slate-200 last:border-r-0">
                           {col}
                         </th>
                       ))}
@@ -242,9 +242,9 @@ export default function CnpjPage() {
                       return (
                         <tr 
                           key={rowIndex} 
-                          className={`border-b hover:bg-muted/30 ${selectedRows.has(globalIndex) ? 'bg-blue-50' : ''}`}
+                          className={`border-b border-slate-200 hover:bg-slate-50 transition-colors ${selectedRows.has(globalIndex) ? 'bg-blue-50' : ''}`}
                         >
-                          <td className="p-2 sticky left-0 bg-white z-10">
+                          <td className="px-3 py-1.5 sticky left-0 bg-white z-10 border-r border-slate-200">
                             <input 
                               type="checkbox" 
                               checked={selectedRows.has(globalIndex)}
@@ -260,7 +260,7 @@ export default function CnpjPage() {
                               : value;
                             
                             return (
-                              <td key={colIndex} className="p-2 border-b whitespace-nowrap">
+                              <td key={colIndex} className="px-3 py-1.5 text-slate-700 whitespace-nowrap border-r border-slate-200 last:border-r-0">
                                 {displayValue}
                               </td>
                             );
