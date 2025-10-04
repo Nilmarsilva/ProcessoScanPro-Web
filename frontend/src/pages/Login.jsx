@@ -41,10 +41,10 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Login Form */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-background">
-        <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary to-primary/80">
+      <div className="w-full max-w-md">
+        {/* Login Card */}
+        <div className="bg-white rounded-lg shadow-xl p-8 space-y-8">
           {/* Logo and Title */}
           <div className="text-center">
             <div className="flex justify-center mb-4">
@@ -61,7 +61,7 @@ export default function Login() {
           </div>
 
           {/* Login Form */}
-          <div className="mt-8 space-y-6">
+          <div className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Error Message */}
               {error && (
@@ -159,41 +159,6 @@ export default function Login() {
           {/* Footer */}
           <div className="text-center text-xs text-muted-foreground">
             <p>© 2025 ProcessoScanPro. Todos os direitos reservados.</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Side - Image/Gradient */}
-      <div className="hidden lg:block lg:flex-1 bg-gradient-to-br from-primary to-primary/80 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
-        <div className="relative h-full flex items-center justify-center p-12">
-          <div className="text-white space-y-6 max-w-lg">
-            <h1 className="text-4xl font-bold">
-              Consulte Processos de Forma Rápida e Eficiente
-            </h1>
-            <p className="text-lg text-white/90">
-              Integração com APIs de tribunais, busca automatizada e relatórios detalhados.
-            </p>
-            <ul className="space-y-3">
-              <li className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
-                  ✓
-                </div>
-                <span>Consultas em tempo real</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
-                  ✓
-                </div>
-                <span>Filtros avançados por CPF/CNPJ</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
-                  ✓
-                </div>
-                <span>Relatórios exportáveis</span>
-              </li>
-            </ul>
           </div>
         </div>
       </div>
