@@ -18,6 +18,21 @@ export default function ComProcessoPage() {
   const [selectAll, setSelectAll] = useState(false);
   const [modalAberto, setModalAberto] = useState(false);
   const [resultadoSelecionado, setResultadoSelecionado] = useState(null);
+
+  // Funções de formatação
+  const formatarCPF = (cpf) => {
+    if (!cpf) return '-';
+    const cleaned = cpf.replace(/\D/g, '');
+    if (cleaned.length !== 11) return cpf;
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  };
+
+  const formatarCNPJ = (cnpj) => {
+    if (!cnpj) return '-';
+    const cleaned = cnpj.replace(/\D/g, '');
+    if (cleaned.length !== 14) return cnpj;
+    return cleaned.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+  };
   
   // Filtros
   const [filtroDocumento, setFiltroDocumento] = useState('');
@@ -398,10 +413,10 @@ export default function ComProcessoPage() {
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-900 font-mono">{resultado.deal_id || '-'}</td>
                     <td className="px-4 py-3 text-sm text-slate-900 font-mono">
-                      {resultado.cpf || '-'}
+                      {formatarCPF(resultado.cpf)}
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-900 font-mono">
-                      {resultado.cnpj || '-'}
+                      {formatarCNPJ(resultado.cnpj)}
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-900">{resultado.nome || '-'}</td>
                     <td className="px-4 py-3 text-sm text-slate-900">{resultado.empresa || '-'}</td>

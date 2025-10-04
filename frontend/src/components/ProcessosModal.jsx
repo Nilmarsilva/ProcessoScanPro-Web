@@ -9,6 +9,21 @@ export default function ProcessosModal({ isOpen, onClose, resultado }) {
 
   const processos = resultado.processos || [];
   
+  // Funções de formatação
+  const formatarCPF = (cpf) => {
+    if (!cpf) return '-';
+    const cleaned = cpf.replace(/\D/g, '');
+    if (cleaned.length !== 11) return cpf;
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  };
+
+  const formatarCNPJ = (cnpj) => {
+    if (!cnpj) return '-';
+    const cleaned = cnpj.replace(/\D/g, '');
+    if (cleaned.length !== 14) return cnpj;
+    return cleaned.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+  };
+  
   // Valida se CPF e CNPJ aparecem juntos no processo
   const validarCorrespondenciaExata = (processo) => {
     if (!processo.parties || !resultado.cpf || !resultado.cnpj) return false;
@@ -55,19 +70,27 @@ export default function ProcessosModal({ isOpen, onClose, resultado }) {
       </div>
 
       <div className="mb-4 p-4 bg-slate-50 rounded-lg">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-3">
           <div>
-            <p className="text-sm text-slate-600">Documento</p>
-            <p className="font-semibold text-slate-900">{resultado.documento}</p>
-          </div>
-          <div>
-            <p className="text-sm text-slate-600">Nome</p>
-            <p className="font-semibold text-slate-900">{resultado.nome}</p>
+            <p className="text-lg font-bold text-slate-900">
+              {resultado.nome} 
+              {resultado.cpf && (
+                <span className="ml-3 text-base font-mono text-slate-600">
+                  CPF: {formatarCPF(resultado.cpf)}
+                </span>
+              )}
+            </p>
           </div>
           {resultado.empresa && (
-            <div className="col-span-2">
-              <p className="text-sm text-slate-600">Empresa</p>
-              <p className="font-semibold text-slate-900">{resultado.empresa}</p>
+            <div>
+              <p className="text-base font-semibold text-slate-700">
+                {resultado.empresa}
+                {resultado.cnpj && (
+                  <span className="ml-3 text-sm font-mono text-slate-600">
+                    CNPJ: {formatarCNPJ(resultado.cnpj)}
+                  </span>
+                )}
+              </p>
             </div>
           )}
         </div>
