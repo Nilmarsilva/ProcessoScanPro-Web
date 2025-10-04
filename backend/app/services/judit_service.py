@@ -11,8 +11,8 @@ from ..db.base import SessionLocal
 class JuditService:
     def __init__(self):
         self.api_key = os.getenv("JUDIT_API_KEY")
-        self.base_url = "https://api.judit.io/v1"
-        self.webhook_url = os.getenv("JUDIT_WEBHOOK_URL", "http://localhost:8000/api/judit/webhook")
+        self.base_url = "https://requests.prod.judit.io"
+        self.webhook_url = os.getenv("JUDIT_WEBHOOK_URL")
         
     def processar_com_webhook(
         self,
@@ -54,12 +54,12 @@ class JuditService:
                         }
                         
                         headers = {
-                            "Authorization": f"Bearer {self.api_key}",
+                            "api-key": self.api_key,
                             "Content-Type": "application/json"
                         }
                         
                         response = client.post(
-                            f"{self.base_url}/search",
+                            f"{self.base_url}/requests",
                             json=payload,
                             headers=headers
                         )
@@ -147,12 +147,12 @@ class JuditService:
                         }
                         
                         headers = {
-                            "Authorization": f"Bearer {self.api_key}",
+                            "api-key": self.api_key,
                             "Content-Type": "application/json"
                         }
                         
                         response = client.post(
-                            f"{self.base_url}/search",
+                            f"{self.base_url}/requests",
                             json=payload,
                             headers=headers
                         )
