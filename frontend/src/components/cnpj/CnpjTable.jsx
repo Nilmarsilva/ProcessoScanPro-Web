@@ -32,7 +32,7 @@ export default function CnpjTable({ data, columns, onExport }) {
 
       {/* Tabela */}
       <div className="border rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-auto max-h-[600px]">
           <table className="w-full">
             <thead className="bg-muted sticky top-0">
               <tr>

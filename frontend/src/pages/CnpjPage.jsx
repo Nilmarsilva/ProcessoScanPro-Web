@@ -216,7 +216,7 @@ export default function CnpjPage() {
           {/* Table Section */}
           {data.length > 0 && (
             <div className="border rounded-lg bg-card overflow-hidden">
-              <div className="overflow-x-auto">
+              <div className="overflow-auto max-h-[600px]">
                 <table className="w-full text-xs">
                   <thead className="bg-muted/50 sticky top-0">
                     <tr>
