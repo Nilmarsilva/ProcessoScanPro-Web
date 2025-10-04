@@ -41,7 +41,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary to-primary/80">
+    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#0F172A' }}>
       <div className="w-full max-w-md">
         {/* Login Card */}
         <div className="bg-white rounded-lg shadow-xl p-8 space-y-8">
