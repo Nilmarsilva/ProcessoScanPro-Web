@@ -34,12 +34,12 @@ export default function CnpjTable({ data, columns, onExport }) {
       <div className="border rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-muted">
+            <thead className="bg-muted sticky top-0">
               <tr>
                 {columns.map((column, index) => (
                   <th
                     key={index}
-                    className="px-4 py-3 text-left text-sm font-medium text-muted-foreground"
+                    className="px-2 py-2 text-left text-xs font-medium text-muted-foreground whitespace-nowrap"
                   >
                     {column}
                   </th>
@@ -52,14 +52,22 @@ export default function CnpjTable({ data, columns, onExport }) {
                   key={rowIndex}
                   className="hover:bg-muted/50 transition-colors"
                 >
-                  {columns.map((column, colIndex) => (
-                    <td
-                      key={colIndex}
-                      className="px-4 py-3 text-sm"
-                    >
-                      {row[column] || '-'}
-                    </td>
-                  ))}
+                  {columns.map((column, colIndex) => {
+                    const value = row[column];
+                    // Converte Date para string
+                    const displayValue = value instanceof Date 
+                      ? value.toLocaleDateString('pt-BR')
+                      : value || '-';
+                    
+                    return (
+                      <td
+                        key={colIndex}
+                        className="px-2 py-2 text-xs whitespace-nowrap"
+                      >
+                        {displayValue}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))}
             </tbody>

@@ -215,12 +215,12 @@ export default function CnpjPage() {
 
           {/* Table Section */}
           {data.length > 0 && (
-            <div className="border rounded-lg bg-card">
+            <div className="border rounded-lg bg-card overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted/50">
+                <table className="w-full text-xs">
+                  <thead className="bg-muted/50 sticky top-0">
                     <tr>
-                      <th className="p-3 text-left font-medium w-12">
+                      <th className="p-2 text-left font-medium w-10 sticky left-0 bg-muted/50 z-10">
                         <input 
                           type="checkbox" 
                           checked={isAllSelected}
@@ -230,7 +230,7 @@ export default function CnpjPage() {
                         />
                       </th>
                       {columns.map((col, index) => (
-                        <th key={index} className="p-3 text-left font-medium border-b">
+                        <th key={index} className="p-2 text-left font-medium border-b whitespace-nowrap">
                           {col}
                         </th>
                       ))}
@@ -244,7 +244,7 @@ export default function CnpjPage() {
                           key={rowIndex} 
                           className={`border-b hover:bg-muted/30 ${selectedRows.has(globalIndex) ? 'bg-blue-50' : ''}`}
                         >
-                          <td className="p-3">
+                          <td className="p-2 sticky left-0 bg-white z-10">
                             <input 
                               type="checkbox" 
                               checked={selectedRows.has(globalIndex)}
@@ -260,7 +260,7 @@ export default function CnpjPage() {
                               : value;
                             
                             return (
-                              <td key={colIndex} className="p-3 border-b">
+                              <td key={colIndex} className="p-2 border-b whitespace-nowrap">
                                 {displayValue}
                               </td>
                             );
