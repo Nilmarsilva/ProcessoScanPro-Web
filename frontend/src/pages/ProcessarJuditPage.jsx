@@ -615,6 +615,7 @@ export default function ProcessarJuditPage() {
               <table className="w-full text-sm">
                 <thead className="bg-muted/50">
                   <tr>
+                    <th className="p-3 text-left font-medium border-b">ID</th>
                     <th className="p-3 text-left font-medium border-b">Nome</th>
                     <th className="p-3 text-left font-medium border-b">Documento</th>
                     <th className="p-3 text-left font-medium border-b">Empresa</th>
@@ -625,6 +626,7 @@ export default function ProcessarJuditPage() {
                 <tbody>
                   {resultados.map((resultado, index) => (
                     <tr key={index} className="border-b hover:bg-muted/30">
+                      <td className="p-3 font-mono text-xs">{resultado.deal_id || '-'}</td>
                       <td className="p-3">{resultado.nome || '-'}</td>
                       <td className="p-3 font-mono text-xs">
                         {resultado.documento || '-'}

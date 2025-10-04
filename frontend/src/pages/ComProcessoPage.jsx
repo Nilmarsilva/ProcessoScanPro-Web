@@ -360,6 +360,7 @@ export default function ComProcessoPage() {
             <thead className="bg-slate-100 border-b border-slate-200">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">Sel</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">ID</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">CPF</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">CNPJ</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">Nome</th>
@@ -395,6 +396,7 @@ export default function ComProcessoPage() {
                         className="rounded border-slate-300 text-primary focus:ring-primary"
                       />
                     </td>
+                    <td className="px-4 py-3 text-sm text-slate-900 font-mono">{resultado.deal_id || '-'}</td>
                     <td className="px-4 py-3 text-sm text-slate-900 font-mono">
                       {resultado.cpf || '-'}
                     </td>
