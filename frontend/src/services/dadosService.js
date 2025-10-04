@@ -1,4 +1,4 @@
-const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/dados`;
+const API_URL = `${import.meta.env.VITE_API_URL || 'https://processoscanpro.atendimentorapido.app.br'}/api/dados`;
 
 export const dadosService = {
   async checkPipedrive(data, colunas) {

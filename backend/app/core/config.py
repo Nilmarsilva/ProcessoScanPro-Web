@@ -42,7 +42,7 @@ class Settings(BaseSettings):
     ASSERTIVA_AUTH_URL: str = "https://api.assertivasolucoes.com.br/oauth2/v3/token"
     
     # CORS
-    CORS_ORIGINS: str = '["http://localhost:3000", "http://localhost:5173", "http://localhost:8000"]'
+    CORS_ORIGINS: str = '["https://processoscanpro.atendimentorapido.app.br", "http://localhost:3000", "http://localhost:5173"]'
     
     @property
     def cors_origins_list(self) -> List[str]:
@@ -51,7 +51,7 @@ class Settings(BaseSettings):
         try:
             return json.loads(self.CORS_ORIGINS)
         except:
-            return ["http://localhost:3000", "http://localhost:5173", "http://localhost:8000"]
+            return ["https://processoscanpro.atendimentorapido.app.br", "http://localhost:3000", "http://localhost:5173"]
     
     # Email
     SMTP_HOST: str = ""
