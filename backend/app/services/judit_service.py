@@ -11,7 +11,8 @@ from ..db.base import SessionLocal
 class JuditService:
     def __init__(self):
         self.api_key = os.getenv("JUDIT_API_KEY")
-        self.base_url = "https://requests.prod.judit.io"
+        self.requests_url = "https://requests.prod.judit.io"
+        self.lawsuits_url = "https://lawsuits.production.judit.io"
         self.webhook_url = os.getenv("JUDIT_WEBHOOK_URL")
         
     def processar_com_webhook(
@@ -59,7 +60,7 @@ class JuditService:
                         }
                         
                         response = client.post(
-                            f"{self.base_url}/requests",
+                            f"{self.requests_url}/requests",
                             json=payload,
                             headers=headers
                         )
@@ -152,43 +153,25 @@ class JuditService:
                         }
                         
                         response = client.post(
-                            f"{self.base_url}/requests",
+                            f"{self.lawsuits_url}/lawsuits",
                             json=payload,
                             headers=headers
                         )
                         
-                        if response.status_code in [200, 201]:
+                        if response.status_code == 200:
                             result = response.json()
-                            judit_request_id = result.get("request_id")
-                            status_resposta = result.get("status", "pending")
                             
-                            # Se status é "pending", salva requisição para consultar depois
-                            if status_resposta == "pending":
-                                request_id = str(uuid.uuid4())
-                                req = JuditRequest(
-                                    batch_id=batch_id,
-                                    request_id=request_id,
-                                    judit_request_id=judit_request_id,
-                                    documento=documento,
-                                    doc_type=doc_type,
-                                    nome=registro.get("Título", registro.get("Pessoa", "")),
-                                    empresa=registro.get("Organização", ""),
-                                    status="aguardando"
-                                )
-                                db.add(req)
-                                db.commit()
-                                print(f"[JUDIT] Requisição criada (pending): {documento} - ID: {judit_request_id}")
-                            else:
-                                # Processa resultado imediatamente se já tiver dados
-                                self._processar_resultado_banco(
-                                    db,
-                                    batch_id,
-                                    registro,
-                                    documento,
-                                    doc_type,
-                                    result
-                                )
-                                print(f"[JUDIT] Processado: {documento}")
+                            # Processa resultado imediatamente (resposta síncrona)
+                            self._processar_resultado_banco(
+                                db,
+                                batch_id,
+                                registro,
+                                documento,
+                                doc_type,
+                                result
+                            )
+                            
+                            print(f"[JUDIT] Processado: {documento}")
                         else:
                             error_msg = f"HTTP {response.status_code}"
                             try:
@@ -327,7 +310,8 @@ class JuditService:
         result: Dict[str, Any]
     ):
         """Processa resultado da consulta no banco de dados"""
-        processos = result.get("data", [])
+        # O endpoint /lawsuits retorna os processos em "lawsuits"
+        processos = result.get("lawsuits", [])
         
         resultado = JuditResult(
             batch_id=batch_id,
