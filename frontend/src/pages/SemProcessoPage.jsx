@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import MainLayout from '../components/layout/MainLayout';
 import { juditService } from '../services/juditService';
 import { assertivaService } from '../services/assertivaService';
 import { pipedriveService } from '../services/pipedriveService';
@@ -231,11 +232,12 @@ export default function SemProcessoPage() {
   const resultadosPaginados = resultadosFiltrados.slice(indiceInicio, indiceFim);
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-slate-900">Registros Sem Processos</h1>
-        <p className="text-slate-600 mt-2">Visualize registros onde não foram encontrados processos</p>
-      </div>
+    <MainLayout title="Registros Sem Processos">
+      <div className="p-6">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-slate-900">Registros Sem Processos</h1>
+          <p className="text-slate-600 mt-2">Visualize registros onde não foram encontrados processos</p>
+        </div>
 
       {/* Seletor de Batch */}
       <div className="mb-4 flex gap-4 items-center">
@@ -413,6 +415,7 @@ export default function SemProcessoPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </MainLayout>
   );
 }

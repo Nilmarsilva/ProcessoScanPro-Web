@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import MainLayout from '../components/layout/MainLayout';
 import { juditService } from '../services/juditService';
 import { pipedriveService } from '../services/pipedriveService';
 import { Button } from '../components/ui/button';
@@ -220,11 +221,12 @@ export default function ComProcessoPage() {
   const resultadosPaginados = resultadosFiltrados.slice(indiceInicio, indiceFim);
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-slate-900">Processos Localizados</h1>
-        <p className="text-slate-600 mt-2">Visualize e gerencie os processos encontrados</p>
-      </div>
+    <MainLayout title="Processos Localizados">
+      <div className="p-6">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-slate-900">Processos Localizados</h1>
+          <p className="text-slate-600 mt-2">Visualize e gerencie os processos encontrados</p>
+        </div>
 
       {/* Seletor de Batch */}
       <div className="mb-4 flex gap-4 items-center">
@@ -409,6 +411,7 @@ export default function ComProcessoPage() {
         onClose={() => setModalAberto(false)}
         resultado={resultadoSelecionado}
       />
-    </div>
+      </div>
+    </MainLayout>
   );
 }
