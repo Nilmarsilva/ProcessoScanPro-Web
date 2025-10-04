@@ -26,19 +26,67 @@ export default function ProcessosModal({ isOpen, onClose, resultado }) {
   
   // Valida se CPF e CNPJ aparecem juntos no processo
   const validarCorrespondenciaExata = (processo) => {
-    if (!processo.parties || !resultado.cpf || !resultado.cnpj) return false;
+    if (!resultado.cpf || !resultado.cnpj) return false;
     
     let cpfEncontrado = false;
     let cnpjEncontrado = false;
     
-    for (const party of processo.parties) {
-      const documento = party.document || '';
-      const documentoLimpo = documento.replace(/\D/g, '');
+    // 1. Verifica nos documentos das partes
+    if (processo.parties && processo.parties.length > 0) {
+      for (const party of processo.parties) {
+        // Verifica main_document
+        const mainDoc = (party.main_document || '').replace(/\D/g, '');
+        if (mainDoc === resultado.cpf) cpfEncontrado = true;
+        if (mainDoc === resultado.cnpj) cnpjEncontrado = true;
+        
+        // Verifica array de documents
+        if (party.documents && Array.isArray(party.documents)) {
+          for (const doc of party.documents) {
+            const documento = (doc.document || '').replace(/\D/g, '');
+            if (documento === resultado.cpf) cpfEncontrado = true;
+            if (documento === resultado.cnpj) cnpjEncontrado = true;
+          }
+        }
+      }
+    }
+    
+    // 2. Se já encontrou ambos, retorna true
+    if (cpfEncontrado && cnpjEncontrado) return true;
+    
+    // 3. Verifica no nome do processo (ex: "PESSOA X EMPRESA")
+    const nomeProcesso = (processo.name || '').toUpperCase();
+    const nomePessoa = (resultado.nome || '').toUpperCase();
+    const nomeEmpresa = (resultado.empresa || '').toUpperCase();
+    
+    // Verifica se o nome da pessoa e da empresa aparecem no nome do processo
+    if (nomePessoa && nomeEmpresa) {
+      const pessoaNoProcesso = nomeProcesso.includes(nomePessoa);
+      const empresaNoProcesso = nomeProcesso.includes(nomeEmpresa);
       
-      if (documentoLimpo === resultado.cpf) cpfEncontrado = true;
-      if (documentoLimpo === resultado.cnpj) cnpjEncontrado = true;
+      if (pessoaNoProcesso && empresaNoProcesso) {
+        return true;
+      }
+    }
+    
+    // 4. Verifica nos nomes das partes
+    if (processo.parties && processo.parties.length > 0) {
+      let pessoaEncontrada = false;
+      let empresaEncontrada = false;
       
-      if (cpfEncontrado && cnpjEncontrado) return true;
+      for (const party of processo.parties) {
+        const nomeParty = (party.name || '').toUpperCase();
+        
+        if (nomePessoa && nomeParty.includes(nomePessoa)) {
+          pessoaEncontrada = true;
+        }
+        if (nomeEmpresa && nomeParty.includes(nomeEmpresa)) {
+          empresaEncontrada = true;
+        }
+      }
+      
+      if (pessoaEncontrada && empresaEncontrada) {
+        return true;
+      }
     }
     
     return false;
