@@ -252,11 +252,19 @@ export default function CnpjPage() {
                               className="w-4 h-4"
                             />
                           </td>
-                          {columns.map((col, colIndex) => (
-                            <td key={colIndex} className="p-3 border-b">
-                              {row[col]}
-                            </td>
-                          ))}
+                          {columns.map((col, colIndex) => {
+                            const value = row[col];
+                            // Converte Date para string
+                            const displayValue = value instanceof Date 
+                              ? value.toLocaleDateString('pt-BR')
+                              : value;
+                            
+                            return (
+                              <td key={colIndex} className="p-3 border-b">
+                                {displayValue}
+                              </td>
+                            );
+                          })}
                         </tr>
                       );
                     })}
