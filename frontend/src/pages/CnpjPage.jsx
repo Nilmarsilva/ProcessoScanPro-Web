@@ -155,17 +155,34 @@ export default function CnpjPage() {
     <MainLayout title="Consultas de CNPJ">
       <div className="p-6">
         <div className="w-full">
-          {/* Status */}
-          <div className="mb-6">
+          {/* Status e ações */}
+          <div className="mb-6 flex items-center justify-between">
             <p className="text-muted-foreground">
               {data.length > 0 ? `${data.length} registro(s) carregado(s)` : 'Carregue uma planilha para começar'}
             </p>
+            
+            {/* Botão para carregar novo arquivo */}
+            {data.length > 0 && (
+              <Button
+                onClick={() => {
+                  setData([]);
+                  setColumns([]);
+                  setCurrentPage(1);
+                  setSelectedRows(new Set());
+                }}
+                variant="outline"
+              >
+                Carregar Novo Arquivo
+              </Button>
+            )}
           </div>
 
-          {/* Upload Section */}
-          <div className="mb-6 p-6 border rounded-lg bg-card">
-            <CnpjUpload onFileUpload={handleFileUpload} isLoading={isLoading} />
-          </div>
+          {/* Upload Section - só aparece se não houver dados */}
+          {data.length === 0 && (
+            <div className="mb-6 p-6 border rounded-lg bg-card">
+              <CnpjUpload onFileUpload={handleFileUpload} isLoading={isLoading} />
+            </div>
+          )}
 
           {/* Action Buttons */}
           {data.length > 0 && (
