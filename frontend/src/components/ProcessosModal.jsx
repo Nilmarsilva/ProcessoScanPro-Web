@@ -146,8 +146,8 @@ export default function ProcessosModal({ isOpen, onClose, resultado }) {
                     </p>
                   </div>
                   <div>
-                    <p className="text-slate-600">Documento</p>
-                    <p className="font-mono text-slate-900">{resultado.documento}</p>
+                    <p className="text-slate-600">CNPJ</p>
+                    <p className="font-mono text-slate-900">{formatarCNPJ(resultado.cnpj)}</p>
                   </div>
                   <div>
                     <p className="text-slate-600">Status</p>
