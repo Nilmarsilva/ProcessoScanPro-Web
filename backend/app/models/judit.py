@@ -42,6 +42,7 @@ class JuditResult(Base):
     id = Column(Integer, primary_key=True, index=True)
     batch_id = Column(String(100), index=True, nullable=False)
     request_id = Column(String(100), index=True)
+    deal_id = Column(String(20), nullable=True)  # ID do negócio no Pipedrive
     documento = Column(String(20))  # Mantido para compatibilidade
     doc_type = Column(String(10))
     cpf = Column(String(11), nullable=True)  # CPF sem formatação

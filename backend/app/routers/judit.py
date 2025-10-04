@@ -193,6 +193,7 @@ async def obter_resultados(batch_id: str, db: Session = Depends(get_db)):
                 "erro": batch.erro,
                 "resultados": [
                     {
+                        "deal_id": r.deal_id if hasattr(r, 'deal_id') else None,
                         "documento": r.documento,
                         "doc_type": r.doc_type,
                         "cpf": r.cpf if hasattr(r, 'cpf') else None,

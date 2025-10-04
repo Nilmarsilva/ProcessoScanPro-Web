@@ -157,12 +157,25 @@ export default function SemProcessoPage() {
     try {
       setLoading(true);
       
+      let totalComDealId = 0;
+      let totalSemDealId = 0;
+      
       for (const resultado of selecionados) {
+        if (!resultado.deal_id) {
+          console.warn(`Registro sem deal_id: ${resultado.cpf || resultado.cnpj}`);
+          totalSemDealId++;
+          continue;
+        }
+        
+        totalComDealId++;
+        
         // Prepara dados para atualização no Pipedrive
         const dadosAtualizacao = {
           deal_id: resultado.deal_id,
           processos_encontrados: 0,
           status_processo: 'Sem Processo',
+          cpf: resultado.cpf,
+          cnpj: resultado.cnpj,
           observacao: resultado.erro || 'Nenhum processo encontrado'
         };
 
@@ -170,7 +183,12 @@ export default function SemProcessoPage() {
         console.log('Atualizando Pipedrive (sem processo):', dadosAtualizacao);
       }
 
-      alert(`${selecionados.length} negócio(s) atualizado(s) no Pipedrive com sucesso!`);
+      let mensagem = `${totalComDealId} negócio(s) atualizado(s) no Pipedrive com sucesso!`;
+      if (totalSemDealId > 0) {
+        mensagem += `\n⚠️ ${totalSemDealId} registro(s) sem ID do Pipedrive (ignorados)`;
+      }
+      
+      alert(mensagem);
       setSelectedItems(new Set());
       setSelectAll(false);
     } catch (error) {

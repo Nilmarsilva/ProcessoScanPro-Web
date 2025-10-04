@@ -117,6 +117,7 @@ export default function PipedrivePage() {
     try {
       // Formata os dados no formato esperado pela tela Processar Judit
       const dadosFormatados = data.map(item => ({
+        'ID': item.id || '',  // ID do negócio no Pipedrive
         'Título': item.title || '',
         'Pessoa': item.person_name || '',
         'CPF': item.cpf || '',

@@ -363,6 +363,7 @@ class JuditService:
         
         resultado = JuditResult(
             batch_id=batch_id,
+            deal_id=registro.get("ID", ""),  # ID do negócio no Pipedrive
             documento=documento,
             doc_type=doc_type,
             cpf=cpf_limpo if cpf_limpo else None,

@@ -220,6 +220,11 @@ export default function ComProcessoPage() {
           continue;
         }
         
+        if (!resultado.deal_id) {
+          console.warn(`Registro sem deal_id: ${resultado.cpf} x ${resultado.cnpj}`);
+          continue;
+        }
+        
         // Prepara dados para atualização no Pipedrive (apenas processos válidos)
         const dadosAtualizacao = {
           deal_id: resultado.deal_id,
