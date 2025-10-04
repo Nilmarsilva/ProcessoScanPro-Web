@@ -25,8 +25,10 @@ class JuditRequest(Base):
     batch_id = Column(String(100), index=True, nullable=False)
     request_id = Column(String(100), unique=True, index=True)
     judit_request_id = Column(String(100), index=True)
-    documento = Column(String(20))
+    documento = Column(String(20))  # Mantido para compatibilidade
     doc_type = Column(String(10))  # cpf, cnpj
+    cpf = Column(String(11), nullable=True)  # CPF sem formatação
+    cnpj = Column(String(14), nullable=True)  # CNPJ sem formatação
     nome = Column(String(255))
     empresa = Column(String(255))
     status = Column(String(50), default="aguardando")  # aguardando, processando, concluído, erro
@@ -40,8 +42,10 @@ class JuditResult(Base):
     id = Column(Integer, primary_key=True, index=True)
     batch_id = Column(String(100), index=True, nullable=False)
     request_id = Column(String(100), index=True)
-    documento = Column(String(20))
+    documento = Column(String(20))  # Mantido para compatibilidade
     doc_type = Column(String(10))
+    cpf = Column(String(11), nullable=True)  # CPF sem formatação
+    cnpj = Column(String(14), nullable=True)  # CNPJ sem formatação
     nome = Column(String(255))
     empresa = Column(String(255))
     status = Column(String(50))  # sucesso, erro

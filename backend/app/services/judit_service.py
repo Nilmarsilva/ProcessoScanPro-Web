@@ -35,10 +35,22 @@ class JuditService:
                         cpf = registro.get("CPF", "").strip()
                         cnpj = registro.get("CNPJ", "").strip()
                         
-                        documento = cnpj if cnpj else cpf
-                        doc_type = "cnpj" if cnpj else "cpf"
+                        # Remove formatação
+                        cpf_limpo = ''.join(filter(str.isdigit, cpf)) if cpf else ""
+                        cnpj_limpo = ''.join(filter(str.isdigit, cnpj)) if cnpj else ""
                         
-                        if not documento:
+                        # Determina qual documento usar (prioriza CNPJ se ambos existirem)
+                        if cnpj_limpo:
+                            documento = cnpj_limpo
+                            doc_type = "cnpj"
+                            search_type = "cpf"  # Busca por CPF mas filtra por CNPJ
+                            search_key = cpf_limpo if cpf_limpo else cnpj_limpo
+                        elif cpf_limpo:
+                            documento = cpf_limpo
+                            doc_type = "cpf"
+                            search_type = "cpf"
+                            search_key = cpf_limpo
+                        else:
                             print(f"[JUDIT] Registro {idx+1}: Sem CPF/CNPJ")
                             continue
                         
@@ -47,12 +59,21 @@ class JuditService:
                         # Prepara payload para API Judit
                         payload = {
                             "search": {
-                                "search_type": doc_type,
-                                "search_key": documento
+                                "search_type": search_type,
+                                "search_key": search_key
                             },
                             "callback_url": self.webhook_url,
                             "with_attachments": with_attachments
                         }
+                        
+                        # Se tiver CNPJ, adiciona filtro para buscar processos onde o CNPJ aparece
+                        if cnpj_limpo and cpf_limpo:
+                            payload["search"]["search_params"] = {
+                                "filter": {
+                                    "party_documents": [cnpj_limpo]
+                                }
+                            }
+                            print(f"[JUDIT] Buscando CPF {cpf_limpo} filtrado por CNPJ {cnpj_limpo}")
                         
                         headers = {
                             "api-key": self.api_key,
@@ -76,6 +97,8 @@ class JuditService:
                                 judit_request_id=judit_request_id,
                                 documento=documento,
                                 doc_type=doc_type,
+                                cpf=cpf_limpo if cpf_limpo else None,
+                                cnpj=cnpj_limpo if cnpj_limpo else None,
                                 nome=registro.get("Título", registro.get("Pessoa", "")),
                                 empresa=registro.get("Organização", ""),
                                 status="aguardando"
@@ -131,21 +154,42 @@ class JuditService:
                         cpf = registro.get("CPF", "").strip()
                         cnpj = registro.get("CNPJ", "").strip()
                         
-                        documento = cnpj if cnpj else cpf
-                        doc_type = "cnpj" if cnpj else "cpf"
+                        # Remove formatação
+                        cpf_limpo = ''.join(filter(str.isdigit, cpf)) if cpf else ""
+                        cnpj_limpo = ''.join(filter(str.isdigit, cnpj)) if cnpj else ""
                         
-                        if not documento:
+                        # Determina qual documento usar (prioriza CNPJ se ambos existirem)
+                        if cnpj_limpo:
+                            documento = cnpj_limpo
+                            doc_type = "cnpj"
+                            search_type = "cpf"  # Busca por CPF mas filtra por CNPJ
+                            search_key = cpf_limpo if cpf_limpo else cnpj_limpo
+                        elif cpf_limpo:
+                            documento = cpf_limpo
+                            doc_type = "cpf"
+                            search_type = "cpf"
+                            search_key = cpf_limpo
+                        else:
                             print(f"[JUDIT] Registro {idx+1}: Sem CPF/CNPJ")
                             continue
                         
                         # Prepara payload (SEM callback_url = banco de dados)
                         payload = {
                             "search": {
-                                "search_type": doc_type,
-                                "search_key": documento
+                                "search_type": search_type,
+                                "search_key": search_key
                             },
                             "with_attachments": with_attachments
                         }
+                        
+                        # Se tiver CNPJ, adiciona filtro para buscar processos onde o CNPJ aparece
+                        if cnpj_limpo and cpf_limpo:
+                            payload["search"]["search_params"] = {
+                                "filter": {
+                                    "party_documents": [cnpj_limpo]
+                                }
+                            }
+                            print(f"[JUDIT] Buscando CPF {cpf_limpo} filtrado por CNPJ {cnpj_limpo}")
                         
                         headers = {
                             "api-key": self.api_key,
@@ -168,7 +212,9 @@ class JuditService:
                                 registro,
                                 documento,
                                 doc_type,
-                                result
+                                result,
+                                cpf_limpo,
+                                cnpj_limpo
                             )
                             
                             print(f"[JUDIT] Processado: {documento}")
@@ -307,7 +353,9 @@ class JuditService:
         registro: Dict[str, Any],
         documento: str,
         doc_type: str,
-        result: Dict[str, Any]
+        result: Dict[str, Any],
+        cpf_limpo: str = None,
+        cnpj_limpo: str = None
     ):
         """Processa resultado da consulta no banco de dados"""
         # O endpoint /lawsuits retorna os processos em "lawsuits"
@@ -317,6 +365,8 @@ class JuditService:
             batch_id=batch_id,
             documento=documento,
             doc_type=doc_type,
+            cpf=cpf_limpo if cpf_limpo else None,
+            cnpj=cnpj_limpo if cnpj_limpo else None,
             nome=registro.get("Título", registro.get("Pessoa", "")),
             empresa=registro.get("Organização", ""),
             status="sucesso",

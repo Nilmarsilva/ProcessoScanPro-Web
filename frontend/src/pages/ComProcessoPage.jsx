@@ -343,10 +343,10 @@ export default function ComProcessoPage() {
                       />
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-900 font-mono">
-                      {resultado.doc_type === 'cpf' ? resultado.documento : '-'}
+                      {resultado.cpf || '-'}
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-900 font-mono">
-                      {resultado.doc_type === 'cnpj' ? resultado.documento : '-'}
+                      {resultado.cnpj || '-'}
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-900">{resultado.nome || '-'}</td>
                     <td className="px-4 py-3 text-sm text-slate-900">{resultado.empresa || '-'}</td>
