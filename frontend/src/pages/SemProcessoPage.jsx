@@ -258,12 +258,12 @@ export default function SemProcessoPage() {
       </div>
 
       {/* Filtros */}
-      <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
             type="text"
-            placeholder="Filtrar por documento..."
+            placeholder="Filtrar por CPF/CNPJ..."
             value={filtroDocumento}
             onChange={(e) => setFiltroDocumento(e.target.value)}
             className="pl-10"
@@ -289,6 +289,9 @@ export default function SemProcessoPage() {
             className="pl-10"
           />
         </div>
+        <div className="text-sm text-slate-600 flex items-center">
+          {resultadosFiltrados.length} resultado(s)
+        </div>
       </div>
 
       {/* Toolbar */}
@@ -308,9 +311,6 @@ export default function SemProcessoPage() {
           <FileDown className="h-4 w-4 mr-2" />
           Exportar Excel
         </Button>
-        <div className="ml-auto text-sm text-slate-600">
-          {resultadosFiltrados.length} resultado(s) encontrado(s)
-        </div>
       </div>
 
       {/* Tabela */}
@@ -320,8 +320,8 @@ export default function SemProcessoPage() {
             <thead className="bg-slate-100 border-b border-slate-200">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">Sel</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">Documento</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">Tipo</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">CPF</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">CNPJ</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">Nome</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">Empresa</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">Resultado</th>
@@ -356,11 +356,11 @@ export default function SemProcessoPage() {
                         className="rounded border-slate-300 text-primary focus:ring-primary"
                       />
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-900 font-mono">{resultado.documento}</td>
-                    <td className="px-4 py-3 text-sm text-slate-900">
-                      <span className="px-2 py-1 bg-slate-100 text-slate-800 rounded text-xs font-medium uppercase">
-                        {resultado.doc_type}
-                      </span>
+                    <td className="px-4 py-3 text-sm text-slate-900 font-mono">
+                      {resultado.doc_type === 'cpf' ? resultado.documento : '-'}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-slate-900 font-mono">
+                      {resultado.doc_type === 'cnpj' ? resultado.documento : '-'}
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-900">
                       {dadosAssertivaItem?.nome || resultado.nome || '-'}

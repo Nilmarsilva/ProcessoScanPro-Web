@@ -247,12 +247,12 @@ export default function ComProcessoPage() {
       </div>
 
       {/* Filtros */}
-      <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
             type="text"
-            placeholder="Filtrar por documento..."
+            placeholder="Filtrar por CPF/CNPJ..."
             value={filtroDocumento}
             onChange={(e) => setFiltroDocumento(e.target.value)}
             className="pl-10"
@@ -278,6 +278,9 @@ export default function ComProcessoPage() {
             className="pl-10"
           />
         </div>
+        <div className="text-sm text-slate-600 flex items-center">
+          {resultadosFiltrados.length} resultado(s)
+        </div>
       </div>
 
       {/* Toolbar */}
@@ -293,9 +296,6 @@ export default function ComProcessoPage() {
           <FileDown className="h-4 w-4 mr-2" />
           Exportar Excel
         </Button>
-        <div className="ml-auto text-sm text-slate-600">
-          {resultadosFiltrados.length} resultado(s) encontrado(s)
-        </div>
       </div>
 
       {/* Tabela */}
@@ -305,7 +305,8 @@ export default function ComProcessoPage() {
             <thead className="bg-slate-100 border-b border-slate-200">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">Sel</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">Documento</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">CPF</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">CNPJ</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">Nome</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">Empresa</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">Qtd Processos</th>
@@ -339,9 +340,14 @@ export default function ComProcessoPage() {
                         className="rounded border-slate-300 text-primary focus:ring-primary"
                       />
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-900">{resultado.documento}</td>
-                    <td className="px-4 py-3 text-sm text-slate-900">{resultado.nome}</td>
-                    <td className="px-4 py-3 text-sm text-slate-900">{resultado.empresa}</td>
+                    <td className="px-4 py-3 text-sm text-slate-900 font-mono">
+                      {resultado.doc_type === 'cpf' ? resultado.documento : '-'}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-slate-900 font-mono">
+                      {resultado.doc_type === 'cnpj' ? resultado.documento : '-'}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-slate-900">{resultado.nome || '-'}</td>
+                    <td className="px-4 py-3 text-sm text-slate-900">{resultado.empresa || '-'}</td>
                     <td className="px-4 py-3 text-sm text-slate-900">
                       <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
                         {resultado.qtd_processos}
