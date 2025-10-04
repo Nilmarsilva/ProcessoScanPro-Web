@@ -8,6 +8,26 @@ export default function ProcessosModal({ isOpen, onClose, resultado }) {
   if (!isOpen || !resultado) return null;
 
   const processos = resultado.processos || [];
+  
+  // Valida se CPF e CNPJ aparecem juntos no processo
+  const validarCorrespondenciaExata = (processo) => {
+    if (!processo.parties || !resultado.cpf || !resultado.cnpj) return false;
+    
+    let cpfEncontrado = false;
+    let cnpjEncontrado = false;
+    
+    for (const party of processo.parties) {
+      const documento = party.document || '';
+      const documentoLimpo = documento.replace(/\D/g, '');
+      
+      if (documentoLimpo === resultado.cpf) cpfEncontrado = true;
+      if (documentoLimpo === resultado.cnpj) cnpjEncontrado = true;
+      
+      if (cpfEncontrado && cnpjEncontrado) return true;
+    }
+    
+    return false;
+  };
 
   const formatarValor = (valor) => {
     if (!valor) return 'Não informado';
@@ -54,17 +74,35 @@ export default function ProcessosModal({ isOpen, onClose, resultado }) {
       </div>
 
       <div className="space-y-3 max-h-[500px] overflow-y-auto">
-        {processos.map((processo, idx) => (
+        {processos.map((processo, idx) => {
+          const isValido = validarCorrespondenciaExata(processo);
+          
+          return (
           <div
             key={idx}
             onClick={() => setProcessoSelecionado(processo)}
-            className="p-4 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
+            className={`p-4 border rounded-lg hover:bg-slate-50 cursor-pointer transition-colors ${
+              isValido 
+                ? 'border-green-300 bg-green-50' 
+                : 'border-orange-300 bg-orange-50'
+            }`}
           >
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <h3 className="font-semibold text-slate-900 mb-2">
-                  {processo.name || 'Processo sem nome'}
-                </h3>
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-semibold text-slate-900">
+                    {processo.name || 'Processo sem nome'}
+                  </h3>
+                  {isValido ? (
+                    <span className="px-2 py-0.5 bg-green-600 text-white rounded text-xs font-medium">
+                      ✓ Válido
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 bg-orange-600 text-white rounded text-xs font-medium">
+                      ⚠ Sem correspondência
+                    </span>
+                  )}
+                </div>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <p className="text-slate-600">Processo</p>
@@ -99,7 +137,8 @@ export default function ProcessosModal({ isOpen, onClose, resultado }) {
               <ChevronLeft className="h-5 w-5 text-slate-400 rotate-180" />
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

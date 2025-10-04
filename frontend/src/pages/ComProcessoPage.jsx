@@ -170,6 +170,28 @@ export default function ComProcessoPage() {
     XLSX.writeFile(wb, `processos_encontrados_${timestamp}.xlsx`);
   };
 
+  // Valida se CPF e CNPJ aparecem juntos no processo
+  const validarCorrespondenciaExata = (processo, cpf, cnpj) => {
+    if (!processo.parties || !cpf || !cnpj) return false;
+    
+    let cpfEncontrado = false;
+    let cnpjEncontrado = false;
+    
+    // Verifica se CPF e CNPJ aparecem nas partes do processo
+    for (const party of processo.parties) {
+      const documento = party.document || '';
+      const documentoLimpo = documento.replace(/\D/g, '');
+      
+      if (documentoLimpo === cpf) cpfEncontrado = true;
+      if (documentoLimpo === cnpj) cnpjEncontrado = true;
+      
+      // Se já encontrou ambos, pode parar
+      if (cpfEncontrado && cnpjEncontrado) return true;
+    }
+    
+    return false;
+  };
+
   const atualizarPipedrive = async () => {
     const selecionados = Array.from(selectedItems).map(idx => resultados[idx]);
     if (selecionados.length === 0) {
@@ -180,17 +202,37 @@ export default function ComProcessoPage() {
     try {
       setLoading(true);
       
+      let totalProcessosValidos = 0;
+      let totalProcessosInvalidos = 0;
+      
       for (const resultado of selecionados) {
-        // Prepara dados para atualização no Pipedrive
+        // Filtra apenas processos com correspondência exata CPF x CNPJ
+        const processosValidos = resultado.processos?.filter(processo => 
+          validarCorrespondenciaExata(processo, resultado.cpf, resultado.cnpj)
+        ) || [];
+        
+        const processosInvalidos = (resultado.processos?.length || 0) - processosValidos.length;
+        totalProcessosValidos += processosValidos.length;
+        totalProcessosInvalidos += processosInvalidos;
+        
+        if (processosValidos.length === 0) {
+          console.warn(`Nenhum processo válido para ${resultado.cpf} x ${resultado.cnpj}`);
+          continue;
+        }
+        
+        // Prepara dados para atualização no Pipedrive (apenas processos válidos)
         const dadosAtualizacao = {
-          deal_id: resultado.deal_id, // Assumindo que o deal_id vem do resultado
-          processos_encontrados: resultado.qtd_processos,
+          deal_id: resultado.deal_id,
+          processos_encontrados: processosValidos.length,
           status_processo: 'Com Processo',
-          detalhes_processos: resultado.processos?.map(p => ({
+          cpf: resultado.cpf,
+          cnpj: resultado.cnpj,
+          detalhes_processos: processosValidos.map(p => ({
             numero_cnj: p.code,
             tribunal: p.tribunal_acronym,
             valor_causa: p.amount,
-            status: p.status
+            status: p.status,
+            nome: p.name
           }))
         };
 
@@ -198,7 +240,13 @@ export default function ComProcessoPage() {
         console.log('Atualizando Pipedrive:', dadosAtualizacao);
       }
 
-      alert(`${selecionados.length} negócio(s) atualizado(s) no Pipedrive com sucesso!`);
+      let mensagem = `${selecionados.length} negócio(s) processado(s)!\n`;
+      mensagem += `✅ ${totalProcessosValidos} processo(s) válido(s) enviado(s)\n`;
+      if (totalProcessosInvalidos > 0) {
+        mensagem += `⚠️ ${totalProcessosInvalidos} processo(s) ignorado(s) (sem correspondência CPF x CNPJ)`;
+      }
+      
+      alert(mensagem);
       setSelectedItems(new Set());
       setSelectAll(false);
     } catch (error) {
